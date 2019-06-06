@@ -1,0 +1,114 @@
+#include <stdio.h>
+//#include <stdlib.h>
+const int ledPin = 13;
+
+// Pinos do Sensor Ultrassom
+const int trigger = 8; 
+const int echo = 9;
+long duracao;
+float dist;
+
+// Variaveis do Piezo
+const int knockSensor = A0; //batida
+const int threshold = 300; //limite
+int sensorReading = 0; 
+
+// Variaveis do Cronometro
+int ledState = LOW; // ledState used to set the LED
+long previousMillis = 0;
+unsigned long tempo = 0;
+unsigned long tempoanterior = 0;
+long interval = 100; //intervalo de tempo em millisegundos
+
+boolean som_ligado;
+boolean objeto_passou = 0;
+
+void setup() {
+  
+ pinMode(trigger, OUTPUT); // Configura o pino trigger como saída
+ pinMode(echo, INPUT); // Configura o pino echo como entrada.
+  
+ pinMode(ledPin, OUTPUT);
+ Serial.begin(9600); 
+}
+
+void loop(){
+  digitalWrite(trigger, HIGH);
+  digitalWrite(trigger, LOW);
+  
+   //Quando a distancia for maior que 21cm  
+/*
+  if (dist >= 21) {
+   digitalWrite(trigger, LOW);
+   digitalWrite(echo, LOW);
+   Serial.println("Aguardando...");
+   }
+*/
+if (dist >= 5) som_ligado = 0;
+  
+  //Função para ligar o Piezo
+  sensorReading = analogRead(knockSensor); 
+
+  // Inicia contagem de tempo e lê o pino de echo
+  duracao = pulseIn(echo, HIGH);
+
+  // Calcular a distância
+   dist = duracao * 0.034 / 2;         
+     
+   unsigned long currentMillis = millis();
+  //Problema aqui
+   long interval = digitalRead(interval);
+ 
+ if(currentMillis - previousMillis > interval) {
+   previousMillis = currentMillis;
+   tempo = currentMillis - tempoanterior; 
+   
+/*   
+  if (dist <= 20) {
+    digitalWrite(trigger, HIGH);
+    digitalWrite(echo, HIGH);
+    Serial.println(tempo = currentMillis - tempoanterior); 
+    //tempo = tempo++;
+    //Continuar a função contando o tempo 
+     
+  }
+*/
+
+if (dist <=4) {
+  som_ligado = 1;
+  objeto_passou = 1;
+  tempoanterior = currentMillis;
+}
+
+}
+  
+    //finaliza a execução quando o Piezo é acionado
+/*    
+    if (sensorReading >= threshold) {
+      digitalWrite(trigger, LOW);
+      digitalWrite(echo, LOW);
+      Serial.print("Finalizado");
+      delay(3600000);
+    }
+*/
+
+if (sensorReading >= threshold) {som_ligado = 0; objeto_passou = 0;}
+
+ // Aguardar 1000ms antes da próxima leitura para evitar interferência
+ delay(100);
+
+if (som_ligado) {
+  digitalWrite(trigger, HIGH);
+  digitalWrite(echo, HIGH);
+  }
+  else {
+  digitalWrite(trigger, LOW);
+  digitalWrite(echo, LOW);
+  }
+
+tempo = currentMillis - tempoanterior;
+
+if (objeto_passou) Serial.println(tempo);
+
+}
+//FIM
