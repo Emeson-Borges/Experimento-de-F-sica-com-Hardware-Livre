@@ -1,2 +1,2 @@
-# Experimento-de-F-sica-com-Hardware-Livre
+# Experimento-de-Fisica-com-Hardware-Livre
 Código para infravermelho ou sensor ultrassonic.
